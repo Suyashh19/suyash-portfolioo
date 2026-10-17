@@ -1,12 +1,11 @@
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
-import { ArrowRight, Copy, FolderGit2, Hash, Moon, Search } from "lucide-react";
+import { ArrowRight, Copy, FolderGit2, Hash, Search } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { profile, projects, site, socials, type SocialKey } from "@/data";
 import { OPEN_PALETTE_EVENT, selectProject } from "@/lib/events";
 import { BrandIcon } from "./ui/BrandIcon";
-import { toggleTheme } from "./ThemeToggle";
 
 type Command = {
   id: string;
@@ -72,13 +71,6 @@ export function CommandPalette() {
             () => (window.location.href = `mailto:${profile.email}`),
           );
         },
-      },
-      {
-        id: "a-theme",
-        group: "Actions",
-        label: "Toggle light / dark theme",
-        icon: <Moon className="size-4" />,
-        run: toggleTheme,
       },
     ],
     [],

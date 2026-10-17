@@ -3,7 +3,6 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
-import { useTheme } from "../ThemeToggle";
 
 // An orbital-tracking scene inspired by OrbitGuard AI: a wireframe Earth,
 // satellites on inclined orbits and a slowly drifting debris field.
@@ -151,10 +150,9 @@ function Rig({ children }: { children: React.ReactNode }) {
 }
 
 export default function OrbitScene({ reducedMotion, active = true }: { reducedMotion: boolean; active?: boolean }) {
-  const theme = useTheme();
   // Neutral planet and debris; orange is reserved for the tracked satellites.
-  const color = theme === "light" ? "#3a3d47" : "#c9ccd6";
-  const signal = theme === "light" ? "#ff5a14" : "#ff6a2b";
+  const color = "#c9ccd6";
+  const signal = "#ff6a2b";
 
   return (
     <Canvas
@@ -165,7 +163,7 @@ export default function OrbitScene({ reducedMotion, active = true }: { reducedMo
       aria-hidden
     >
       <Rig>
-        <Globe color={color} core={theme === "light" ? "#f5f3ee" : "#0a0b0e"} />
+        <Globe color={color} core="#0a0b0e" />
         {ORBITS.map((o, i) => (
           <Orbit key={i} {...o} color={color} signal={signal} />
         ))}

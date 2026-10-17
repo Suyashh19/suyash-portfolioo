@@ -4,7 +4,6 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { profile } from "@/data";
-import { useTheme } from "../ThemeToggle";
 
 // A particle field that morphs between the shapes in heroShapes.ts. All four target layouts live
 // in vertex attributes, so the morph, swirl, idle drift and cursor repulsion all run on the GPU.
@@ -187,7 +186,6 @@ const vertexShader = /* glsl */ `
   varying float vAccent;
   varying float vAlpha;
   varying float vBright;
-  varying float vPortrait;
 
   vec3 shape(float i) {
     if (i < 0.5) return aP0;
@@ -225,7 +223,6 @@ const vertexShader = /* glsl */ `
     vAccent = aAccent * (1.0 - 0.8 * portrait);
     vAlpha = mix(0.35 + 0.5 * aRand, 0.75 + 0.25 * aRand, portrait);
     vBright = mix(1.0, aLum, portrait);
-    vPortrait = portrait;
   }
 `;
 
@@ -233,32 +230,26 @@ const fragmentShader = /* glsl */ `
   uniform vec3 uBase;
   uniform vec3 uAccent;
   uniform float uOpacity;
-  uniform float uLight;
   varying float vAccent;
   varying float vAlpha;
   varying float vBright;
-  varying float vPortrait;
   void main() {
     float d = length(gl_PointCoord - 0.5);
     if (d > 0.5) discard;
     float a = smoothstep(0.5, 0.05, d) * vAlpha * uOpacity;
-    // Dark mode glows brighter where the photo is lit. Light mode draws ink, so lit areas
-    // (already dense with particles) get fainter dots and shadows get darker ones.
-    float tone = mix(vBright, 1.0 - 0.75 * vBright, uLight * vPortrait);
-    vec3 col = mix(uBase, uAccent, vAccent) * mix(1.0, tone, 1.0 - uLight);
-    gl_FragColor = vec4(col, a * mix(1.0, tone, uLight));
+    // Glows brighter where the photo is lit.
+    vec3 col = mix(uBase, uAccent, vAccent) * vBright;
+    gl_FragColor = vec4(col, a);
   }
 `;
 
 function Particles({
   stage,
   reducedMotion,
-  light,
   portrait,
 }: {
   stage: number;
   reducedMotion: boolean;
-  light: boolean;
   portrait: { pos: Float32Array; lum: Float32Array } | null;
 }) {
   const material = useRef<THREE.ShaderMaterial>(null);
@@ -302,7 +293,6 @@ function Particles({
       uBase: { value: new THREE.Color() },
       uAccent: { value: new THREE.Color() },
       uOpacity: { value: 1 },
-      uLight: { value: 0 },
     }),
     [],
   );
@@ -327,8 +317,6 @@ function Particles({
     invalidate(); // render the new shape even when the frameloop is on demand (reduced motion)
   }, [stage, invalidate]);
 
-  useEffect(() => invalidate(), [light, invalidate]);
-
   useFrame(({ clock }, dt) => {
     const m = material.current;
     if (!m) return;
@@ -344,11 +332,9 @@ function Particles({
     u.uMouse.value.set(mouse.current.x, mouse.current.y);
     const pointerActive = !reducedMotion && performance.now() - mouse.current.last < 1500;
     u.uMouseStrength.value = THREE.MathUtils.damp(u.uMouseStrength.value, pointerActive ? 1 : 0, 4, dt);
-    u.uBase.value.set(light ? "#2b2e38" : "#d4d6de");
-    u.uAccent.value.set(light ? "#ff5a14" : "#ff6a2b");
-    u.uOpacity.value = light ? 0.85 : 1;
-    u.uLight.value = light ? 1 : 0;
-    m.blending = light ? THREE.NormalBlending : THREE.AdditiveBlending;
+    u.uBase.value.set("#d4d6de");
+    u.uAccent.value.set("#ff6a2b");
+    m.blending = THREE.AdditiveBlending;
 
     if (group.current && !reducedMotion) {
       // Sway rather than spin so the initials stay legible; lean slightly toward the pointer.
@@ -396,7 +382,6 @@ export default function HeroScene({
   reducedMotion: boolean;
   active: boolean;
 }) {
-  const theme = useTheme();
   const [portrait, setPortrait] = useState<{ pos: Float32Array; lum: Float32Array } | null | undefined>(undefined);
 
   useEffect(() => {
@@ -420,7 +405,7 @@ export default function HeroScene({
       frameloop={!active ? "never" : reducedMotion ? "demand" : "always"}
       aria-hidden
     >
-      <Particles stage={stage} reducedMotion={reducedMotion} light={theme === "light"} portrait={portrait} />
+      <Particles stage={stage} reducedMotion={reducedMotion} portrait={portrait} />
     </Canvas>
   );
 }

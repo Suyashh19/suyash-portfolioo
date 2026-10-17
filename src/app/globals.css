@@ -1,10 +1,6 @@
 @import "tailwindcss";
 
-/* Light/dark is driven by data-theme on <html>, set before paint by the inline script in layout.tsx */
-@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
-
-:root,
-[data-theme="dark"] {
+:root {
   /* Mission control: cool graphite, warm paper-white type, one signal-orange accent */
   --bg: #0a0b0e;
   --bg-elev: #111318;
@@ -25,25 +21,6 @@
   color-scheme: dark;
 }
 
-[data-theme="light"] {
-  --bg: #f5f3ee;
-  --bg-elev: #ffffff;
-  --surface: rgba(255, 255, 255, 0.75);
-  --surface-strong: #ffffff;
-  --fg: #111216;
-  --muted: #565862;
-  --faint: #8e909a;
-  --line: rgba(17, 18, 22, 0.09);
-  --line-strong: rgba(17, 18, 22, 0.18);
-  --accent: #ff5a14;
-  --accent-text: #c2410c;
-  --accent-ink: #160803;
-  --accent-soft: rgba(255, 90, 20, 0.09);
-  --glow: rgba(255, 90, 20, 0.28);
-  --grid: rgba(17, 18, 22, 0.045);
-  --shadow: 0 30px 60px -30px rgba(17, 18, 22, 0.22);
-  color-scheme: light;
-}
 
 @theme inline {
   --color-bg: var(--bg);

@@ -6,7 +6,6 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 import { profile, site, socials } from "@/data";
 import { openPalette } from "@/lib/events";
 import { BrandIcon } from "./ui/BrandIcon";
-import { ThemeToggle } from "./ThemeToggle";
 
 const sections = site.sections.filter((s) => s.enabled);
 const links = sections.filter((s) => s.id !== "contact");
@@ -110,7 +109,6 @@ export function Navbar() {
                 {isMac ? "⌘" : "Ctrl"} K
               </kbd>
             </button>
-            <ThemeToggle />
             <a
               href="#contact"
               className="hidden rounded-full bg-accent px-4 py-2 text-sm font-semibold text-accent-ink transition hover:shadow-[0_0_24px_var(--glow)] sm:block"
