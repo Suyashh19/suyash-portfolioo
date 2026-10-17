@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Suyash Patil — Portfolio
 
-## Getting Started
+Personal portfolio built with **Next.js 16 (App Router) + TypeScript**, **Tailwind CSS v4**, **Motion for React** and **React Three Fiber**.
 
-First, run the development server:
+## Run it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000
+npm run build      # production build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Editing content (no UI code needed)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Everything on the site renders from `src/data/`:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| File | What it controls |
+| --- | --- |
+| `profile.ts` | Name, rotating titles, tagline, About text, location, availability pill, photos, resume link, social links |
+| `projects.ts` | Projects: order, text, stack, metrics, links. `featured: false` moves one to "More builds". Add `image: "/images/x.png"` to replace the generated artwork with a screenshot |
+| `achievements.ts` | Experience, hackathons and certifications (`kind` sets the icon and label) |
+| `skills.ts` | Skill groups (`level: "core"` highlights a skill), coding profiles and ratings, education |
+| `site.ts` | Section order and visibility, section headings, hero stats and SEO |
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+**Resume:** put `resume.pdf` in `public/` and set `resumeUrl: "/resume.pdf"` in `profile.ts`. Download buttons appear automatically.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Photos:** live in `public/images/`. Change `photos` in `profile.ts`. `position` controls the crop focus.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Hero particle portrait
 
-## Deploy on Vercel
+The first hero particle shape is generated from `public/images/suyash-portrait.jpg` into `public/portrait-points.bin`.
+To regenerate it from a different photo:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+python -m venv .segenv && .segenv/Scripts/pip install mediapipe pillow numpy   # macOS/Linux: .segenv/bin/pip
+# Google's official MediaPipe person-segmentation model (~16 MB)
+curl -L -o selfie_multiclass.tflite https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_multiclass_256x256/float32/latest/selfie_multiclass_256x256.tflite
+mkdir seg
+.segenv/Scripts/python scripts/portrait_segment.py public/images/your-photo.jpg selfie_multiclass.tflite seg
+.segenv/Scripts/python scripts/portrait_points.py public/images/your-photo.jpg seg public/portrait-points.bin seg/preview.png
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`seg/preview.png` shows the result. The crop (`y1`, `x0`, `x1`) and the per-region particle budget at the top of
+`portrait_points.py` are tuned for the current photo, so adjust them for a new one.
+
+## Deploy (Vercel)
+
+1. Push this repo to GitHub.
+2. Import it at vercel.com/new. The defaults work.
+3. Update `site.url` in `src/data/site.ts` to your final domain.
