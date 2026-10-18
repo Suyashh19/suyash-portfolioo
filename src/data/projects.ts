@@ -23,7 +23,10 @@ export const projects: Project[] = [
       { value: "0.96", label: "ROC-AUC", note: "XGBoost, held-out test set (project-reported)" },
       { value: "7 days", label: "look-ahead window" },
     ],
-    links: [{ label: "GitHub", href: "https://github.com/shambhuz28/Fusion-hackathon", kind: "github" }],
+    links: [
+      { label: "GitHub", href: "https://github.com/shambhuz28/Fusion-hackathon", kind: "github" },
+      { label: "Live app", href: "https://huggingface.co/spaces/Suyashhh19/orbitguard-ai", kind: "live" },
+    ],
     visual: "orbit",
     featured: true,
   },
