@@ -81,7 +81,10 @@ export const projects: Project[] = [
       { value: "Guarded", label: "input/output rails" },
       { value: "Evals", label: "RAGAS + DeepEval" },
     ],
-    links: [{ label: "GitHub", href: "https://github.com/Suyashh19/Enterprise_grade_rag", kind: "github" }],
+    links: [
+      { label: "GitHub", href: "https://github.com/Suyashh19/Enterprise_grade_rag", kind: "github" },
+      { label: "Live demo", href: "https://enterprisegraderag-11.streamlit.app/", kind: "live" },
+    ],
     visual: "rag",
     featured: true,
   },
